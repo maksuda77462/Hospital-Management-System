@@ -1,4 +1,4 @@
- #ifndef STAFF_H
+#ifndef STAFF_H
 #define STAFF_H
 
 struct Staff {
@@ -11,5 +11,6 @@ struct Staff {
 
 void addStaff();
 void viewAllStaff();
+void staffMenu();
 
 #endif
