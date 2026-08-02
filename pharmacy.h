@@ -10,5 +10,6 @@ struct Medicine {
 
 void addMedicine();
 void viewAllMedicines()
+void searchMedicine();
 void pharmacyMenu();
 #endif
