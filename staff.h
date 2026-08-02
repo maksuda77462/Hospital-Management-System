@@ -11,6 +11,7 @@ struct Staff {
 
 void addStaff();
 void viewAllStaff();
+void searchStaff();
 void staffMenu();
 
 #endif
