@@ -9,6 +9,6 @@ struct Medicine {
 };
 
 void addMedicine();
-void viewAllMedicines();
-
+void viewAllMedicines()
+void pharmacyMenu();
 #endif
