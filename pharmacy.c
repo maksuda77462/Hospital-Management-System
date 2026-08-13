@@ -1,77 +1,165 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include "pharmacy.h"
+#include <string.h>
 
-void addMedicine() {
-    struct Medicine m;
-    FILE *f = fopen("medicines.txt", "a");
-    if (!f) { printf("File error!\n"); return; }
-    
-    printf("Enter Medicine ID: "); scanf("%d", &m.id);
-    printf("Enter Medicine Name: "); scanf(" %[^\n]", m.name);
-    printf("Enter Quantity: "); scanf("%d", &m.quantity);
-    printf("Enter Price: "); scanf("%f", &m.price);
-    
-    fprintf(f, "%d %s %d %.2f\n", m.id, m.name, m.quantity, m.price);
-    fclose(f);
-    printf("Medicine added successfully!\n");
-}
+struct Pharmacy
+{
+    int medicineId;
+    char medicineName[50];
+    int quantity;
+    float price;
+};
 
-void viewAllMedicines() {
-    struct Medicine m;
-    FILE *f = fopen("medicines.txt", "r");
-    if (!f) { printf("No medicines found.\n"); return; }
-    
-    printf("\n====== MEDICINE LIST ======\n");
-    while (fscanf(f, "%d %s %d %f", &m.id, m.name, &m.quantity, &m.price) == 4) {
-        printf("ID: %d | Name: %s | Stock: %d | Price: %.2f\n",
-               m.id, m.name, m.quantity, m.price);
-    }
-    fclose(f);
-}
-void searchMedicine() {
-    struct Medicine m;
-    int searchId, found = 0;
-    FILE *f = fopen("medicines.txt", "r");
-    if (!f) { 
-        printf("No medicines found.\n"); 
-        return; 
+void addMedicine()
+{
+    struct Pharmacy m;
+    FILE *fp;
+
+    fp = fopen("medicine.txt", "a");
+
+    if(fp == NULL)
+    {
+        printf("\nFile cannot be opened!");
+        return;
     }
 
-    printf("Enter Medicine ID to search: ");
-    scanf("%d", &searchId);
+    printf("\n===== ADD MEDICINE =====");
 
-    while (fscanf(f, "%d %s %d %f", &m.id, m.name, &m.quantity, &m.price) == 4) {
-        if (m.id == searchId) {
-            printf("\n--- Medicine Found! ---\n");
-            printf("ID: %d | Name: %s | Stock: %d | Price: %.2f\n", m.id, m.name, m.quantity, m.price);
+    printf("\nMedicine ID: ");
+    scanf("%d", &m.medicineId);
+
+    printf("Medicine Name: ");
+    scanf(" %[^\n]", m.medicineName);
+
+    printf("Quantity: ");
+    scanf("%d", &m.quantity);
+
+    printf("Price: ");
+    scanf("%f", &m.price);
+
+    fprintf(fp, "%d %s %d %.2f\n",
+            m.medicineId,
+            m.medicineName,
+            m.quantity,
+            m.price);
+
+    fclose(fp);
+
+    printf("\nMedicine Added Successfully!\n");
+}
+
+void viewMedicine()
+{
+    struct Pharmacy m;
+    FILE *fp;
+
+    fp = fopen("medicine.txt", "r");
+
+    if(fp == NULL)
+    {
+        printf("\nNo medicine record found!");
+        return;
+    }
+
+    printf("\n===== MEDICINE RECORD =====");
+
+    while(fscanf(fp, "%d %s %d %f",
+                 &m.medicineId,
+                 m.medicineName,
+                 &m.quantity,
+                 &m.price) != EOF)
+    {
+        printf("\n\nMedicine ID: %d", m.medicineId);
+        printf("\nMedicine Name: %s", m.medicineName);
+        printf("\nQuantity: %d", m.quantity);
+        printf("\nPrice: %.2f", m.price);
+    }
+
+    fclose(fp);
+}
+
+void searchMedicine()
+{
+    struct Pharmacy m;
+    FILE *fp;
+    int id;
+    int found = 0;
+
+    fp = fopen("medicine.txt", "r");
+
+    if(fp == NULL)
+    {
+        printf("\nNo medicine record found!");
+        return;
+    }
+
+    printf("\nEnter Medicine ID: ");
+    scanf("%d", &id);
+
+    while(fscanf(fp, "%d %s %d %f",
+                 &m.medicineId,
+                 m.medicineName,
+                 &m.quantity,
+                 &m.price) != EOF)
+    {
+        if(m.medicineId == id)
+        {
+            printf("\n===== MEDICINE FOUND =====");
+            printf("\nMedicine ID: %d", m.medicineId);
+            printf("\nMedicine Name: %s", m.medicineName);
+            printf("\nQuantity: %d", m.quantity);
+            printf("\nPrice: %.2f", m.price);
+
             found = 1;
             break;
         }
     }
-    if (!found) {
-        printf("Medicine with ID %d not found!\n", searchId);
+
+    if(found == 0)
+    {
+        printf("\nMedicine Not Found!");
     }
-    fclose(f);
+
+    fclose(fp);
 }
-void pharmacyMenu() {
+
+int main()
+{
     int choice;
-    while(1) {
-        printf("\n===== PHARMACY MENU =====\n");
-        printf("1. Add Medicine\n");
-        printf("2. View All Medicines\n");
-        printf("3. Search Medicine\n");
-        printf("4. Back\n");
-        printf("Enter Choice: ");
+
+    while(1)
+    {
+        printf("\n\n===== PHARMACY MANAGEMENT =====");
+
+        printf("\n1. Add Medicine");
+        printf("\n2. View Medicine");
+        printf("\n3. Search Medicine");
+        printf("\n4. Exit");
+
+        printf("\n\nChoice: ");
         scanf("%d", &choice);
-        
-        switch(choice) {
-            case 1: addMedicine(); break;
-            case 2: viewAllMedicines(); break;
-            case 3: searchMedicine(); break;
-            case 4: return;
-            default: printf("Invalid Choice!\n");
+
+        switch(choice)
+        {
+            case 1:
+                addMedicine();
+                break;
+
+            case 2:
+                viewMedicine();
+                break;
+
+            case 3:
+                searchMedicine();
+                break;
+
+            case 4:
+                exit(0);
+
+            default:
+                printf("\nInvalid Choice!");
         }
     }
+
+    return 0;
 }
