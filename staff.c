@@ -1,79 +1,187 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-#include "staff.h"
 
-void addStaff() {
-    struct Staff s;
-    FILE *f = fopen("staff.txt", "a");
-    if (!f) { printf("File error!\n"); return; }
-    
-    printf("Enter Staff ID: "); scanf("%d", &s.id);
-    printf("Enter Name: "); scanf(" %[^\n]", s.name);
-    printf("Enter Position: "); scanf(" %[^\n]", s.position);
-    printf("Enter Salary: "); scanf("%f", &s.salary);
-    printf("Enter Phone: "); scanf(" %[^\n]", s.phone);
-    
-    fprintf(f, "%d %s %s %.2f %s\n", s.id, s.name, s.position, s.salary, s.phone);
-    fclose(f);
-    printf("Staff added successfully!\n");
-}
+struct Staff
+{
+    int staffId;
+    char name[50];
+    char designation[50];
+    char phone[20];
+    float salary;
+};
 
-void viewAllStaff() {
+void addStaff()
+{
     struct Staff s;
-    FILE *f = fopen("staff.txt", "r");
-    if (!f) { printf("No staff found.\n"); return; }
-    
-    printf("\n====== STAFF LIST ======\n");
-    while (fscanf(f, "%d %s %s %f %s", &s.id, s.name, s.position, &s.salary, s.phone) == 5) {
-        printf("ID: %d | Name: %s | Position: %s | Salary: %.2f | Phone: %s\n",
-               s.id, s.name, s.position, s.salary, s.phone);
-    }
-    fclose(f);
-}
-void searchStaff() {
-    struct Staff s;
-    int searchId, found = 0;
-    FILE *f = fopen("staff.txt", "r");
-    if (!f) { 
-        printf("No staff found.\n"); 
-        return; 
+    FILE *fp;
+
+    fp = fopen("staff.txt", "a");
+
+    if (fp == NULL)
+    {
+        printf("\nFile cannot be opened!");
+        return;
     }
 
-    printf("Enter Staff ID to search: ");
-    scanf("%d", &searchId);
+    printf("\n===== ADD STAFF =====\n");
 
-    while (fscanf(f, "%d %s %s %f %s", &s.id, s.name, s.position, &s.salary, s.phone) == 5) {
-        if (s.id == searchId) {
-            printf("\n--- Staff Found! ---\n");
-            printf("ID: %d | Name: %s | Position: %s | Salary: %.2f | Phone: %s\n", 
-                   s.id, s.name, s.position, s.salary, s.phone);
+    printf("Staff ID: ");
+    scanf("%d", &s.staffId);
+
+    printf("Staff Name: ");
+    scanf(" %[^\n]", s.name);
+
+    printf("Designation: ");
+    scanf(" %[^\n]", s.designation);
+
+    printf("Phone Number: ");
+    scanf("%s", s.phone);
+
+    printf("Salary: ");
+    scanf("%f", &s.salary);
+
+    fprintf(fp, "%d|%s|%s|%s|%.2f\n",
+            s.staffId,
+            s.name,
+            s.designation,
+            s.phone,
+            s.salary);
+
+    fclose(fp);
+
+    printf("\nStaff Added Successfully!\n");
+}
+
+void viewStaff()
+{
+    struct Staff s;
+    FILE *fp;
+    int count = 0;
+
+    fp = fopen("staff.txt", "r");
+
+    if (fp == NULL)
+    {
+        printf("\nNo staff record found!");
+        return;
+    }
+
+    printf("\n====================================\n");
+    printf("          STAFF RECORD\n");
+    printf("====================================\n");
+
+    while (fscanf(fp, "%d|%[^|]|%[^|]|%[^|]|%f",
+                  &s.staffId,
+                  s.name,
+                  s.designation,
+                  s.phone,
+                  &s.salary) == 5)
+    {
+        count++;
+
+        printf("\nStaff %d", count);
+        printf("\nStaff ID    : %d", s.staffId);
+        printf("\nName        : %s", s.name);
+        printf("\nDesignation : %s", s.designation);
+        printf("\nPhone       : %s", s.phone);
+        printf("\nSalary      : %.2f\n", s.salary);
+    }
+
+    fclose(fp);
+
+    printf("\n====================================\n");
+}
+
+void searchStaff()
+{
+    struct Staff s;
+    FILE *fp;
+    int id;
+    int found = 0;
+
+    fp = fopen("staff.txt", "r");
+
+    if (fp == NULL)
+    {
+        printf("\nNo staff record found!");
+        return;
+    }
+
+    printf("\n===== SEARCH STAFF =====\n");
+
+    printf("Enter Staff ID: ");
+    scanf("%d", &id);
+
+    while (fscanf(fp, "%d|%[^|]|%[^|]|%[^|]|%f",
+                  &s.staffId,
+                  s.name,
+                  s.designation,
+                  s.phone,
+                  &s.salary) == 5)
+    {
+        if (s.staffId == id)
+        {
+            printf("\nStaff Found!\n");
+
+            printf("Staff ID    : %d\n", s.staffId);
+            printf("Name        : %s\n", s.name);
+            printf("Designation : %s\n", s.designation);
+            printf("Phone       : %s\n", s.phone);
+            printf("Salary      : %.2f\n", s.salary);
+
             found = 1;
             break;
         }
     }
-    if (!found) {
-        printf("Staff with ID %d not found!\n", searchId);
+
+    if (found == 0)
+    {
+        printf("\nStaff Not Found!\n");
     }
-    fclose(f);
+
+    fclose(fp);
 }
-void staffMenu() {
+
+int main()
+{
     int choice;
-    while(1) {
-        printf("\n===== STAFF MENU =====\n");
-        printf("1. Add Staff\n");
-        printf("2. View All Staff\n");
-        printf("3. Search Staff\n");
-        printf("4. Back\n");
-        printf("Enter Choice: ");
+
+    while (1)
+    {
+        printf("\n\n====================================");
+        printf("\n        STAFF MANAGEMENT");
+        printf("\n====================================");
+
+        printf("\n1. Add Staff");
+        printf("\n2. View Staff");
+        printf("\n3. Search Staff");
+        printf("\n4. Exit");
+
+        printf("\n\nEnter your choice: ");
         scanf("%d", &choice);
-        
-        switch(choice) {
-            case 1: addStaff(); break;
-            case 2: viewAllStaff(); break;
-            case 3: searchStaff(); break;
-            case 4: return;
-            default: printf("Invalid Choice!\n");
+
+        switch (choice)
+        {
+        case 1:
+            addStaff();
+            break;
+
+        case 2:
+            viewStaff();
+            break;
+
+        case 3:
+            searchStaff();
+            break;
+
+        case 4:
+            printf("\nThank you!\n");
+            exit(0);
+
+        default:
+            printf("\nInvalid Choice!");
         }
     }
+
+    return 0;
 }
